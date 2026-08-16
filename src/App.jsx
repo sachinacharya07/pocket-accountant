@@ -252,7 +252,7 @@ function PocketAccountant({ user, theme, colors, onToggleTheme, installEvent, on
     <div style={{ ...themeVars(colors), background: "var(--bg)", minHeight: "100vh", display: "flex", justifyContent: "center", padding: "24px 12px", fontFamily: "'Inter', sans-serif" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap');
-        .phone { width: 380px; max-width: 100%; background: var(--surface); border-radius: 40px; padding: 22px 18px 18px; box-shadow: 20px 20px 40px var(--shadow-d), -20px -20px 40px var(--shadow-l); }
+        .phone { width: 380px; max-width: 100%; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 40px; padding: 22px 18px 18px; backdrop-filter: blur(24px) saturate(160%); -webkit-backdrop-filter: blur(24px) saturate(160%); box-shadow: 0 20px 60px var(--shadow-d); }
         ${NEU_CSS}
       `}</style>
 

@@ -1,35 +1,40 @@
 import { useState, useEffect } from "react";
 
+// Glassmorphism theme: vivid gradient backdrop + frosted, blurred cards.
 export const THEMES = {
   light: {
-    bg: "#F4F1E9",
-    surface: "#EDEAE2",
-    shadowD: "#c8c5bc",
-    shadowL: "#ffffff",
-    text1: "#3A362E",
-    text2: "#9A9484",
-    text3: "#C7C2B4",
-    divider: "#DAD6CB",
-    overlay: "rgba(58,54,46,0.35)",
-    accent: "#1F7A5C",
-    warn: "#E2A63B",
-    warnText: "#B98A2E",
-    danger: "#C1584B",
+    bg: "linear-gradient(135deg, #0FA968 0%, #34C495 30%, #62C6D9 60%, #F2B84B 100%)",
+    glassBg: "rgba(255,255,255,0.18)",
+    glassBgStrong: "rgba(255,255,255,0.30)",
+    glassWell: "rgba(0,0,0,0.14)",
+    glassBorder: "rgba(255,255,255,0.38)",
+    shadowD: "rgba(15,23,42,0.22)",
+    text1: "#FFFFFF",
+    text2: "rgba(255,255,255,0.80)",
+    text3: "rgba(255,255,255,0.52)",
+    divider: "rgba(255,255,255,0.30)",
+    overlay: "rgba(15,23,42,0.50)",
+    accent: "#FFD166",
+    warn: "#FFB84D",
+    warnText: "#FFF1D6",
+    danger: "#FF6B6B",
   },
   dark: {
-    bg: "#1C1E22",
-    surface: "#25282E",
-    shadowD: "#15171B",
-    shadowL: "#333740",
-    text1: "#EDEAE2",
-    text2: "#8E9199",
-    text3: "#565A62",
-    divider: "#33373E",
-    overlay: "rgba(0,0,0,0.55)",
-    accent: "#33B08A",
-    warn: "#E8B458",
-    warnText: "#E8B458",
-    danger: "#E27A6C",
+    bg: "linear-gradient(135deg, #0B1220 0%, #101B2E 30%, #123B3E 65%, #0F2E2A 100%)",
+    glassBg: "rgba(255,255,255,0.07)",
+    glassBgStrong: "rgba(255,255,255,0.12)",
+    glassWell: "rgba(0,0,0,0.35)",
+    glassBorder: "rgba(255,255,255,0.15)",
+    shadowD: "rgba(0,0,0,0.55)",
+    text1: "#F1F5F9",
+    text2: "rgba(241,245,249,0.70)",
+    text3: "rgba(241,245,249,0.44)",
+    divider: "rgba(255,255,255,0.15)",
+    overlay: "rgba(0,0,0,0.65)",
+    accent: "#5EEAD4",
+    warn: "#FBBF24",
+    warnText: "#FDE68A",
+    danger: "#FB7185",
   },
 };
 
@@ -55,9 +60,11 @@ export function useTheme() {
 export function themeVars(colors) {
   return {
     "--bg": colors.bg,
-    "--surface": colors.surface,
+    "--glass-bg": colors.glassBg,
+    "--glass-bg-strong": colors.glassBgStrong,
+    "--glass-well": colors.glassWell,
+    "--glass-border": colors.glassBorder,
     "--shadow-d": colors.shadowD,
-    "--shadow-l": colors.shadowL,
     "--text-1": colors.text1,
     "--text-2": colors.text2,
     "--text-3": colors.text3,
@@ -70,14 +77,56 @@ export function themeVars(colors) {
   };
 }
 
-export const NEU_CSS = `
-  .neu { background: var(--surface); border-radius: 20px; box-shadow: 8px 8px 16px var(--shadow-d), -8px -8px 16px var(--shadow-l); }
-  .neu-in { background: var(--surface); border-radius: 16px; box-shadow: inset 6px 6px 12px var(--shadow-d), inset -6px -6px 12px var(--shadow-l); }
-  .neu-btn { background: var(--surface); border-radius: 14px; box-shadow: 6px 6px 12px var(--shadow-d), -6px -6px 12px var(--shadow-l); transition: all .12s ease; cursor: pointer; border: none; }
-  .neu-btn:active { box-shadow: inset 4px 4px 8px var(--shadow-d), inset -4px -4px 8px var(--shadow-l); }
-  .neu-circle { background: var(--surface); border-radius: 50%; box-shadow: 6px 6px 12px var(--shadow-d), -6px -6px 12px var(--shadow-l); }
-  .neu-circle.active { box-shadow: inset 4px 4px 8px var(--shadow-d), inset -4px -4px 8px var(--shadow-l); }
+// Same class names as before (.neu, .neu-in, .neu-btn, .neu-circle) so no JSX
+// had to change — only what they render changed, from neumorphic soft-shadow
+// cards to frosted glass panels.
+export const GLASS_CSS = `
+  .neu {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: 0 8px 32px var(--shadow-d);
+  }
+  .neu-in {
+    background: var(--glass-well);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .neu-btn {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: 0 6px 20px var(--shadow-d);
+    transition: all .15s ease;
+    cursor: pointer;
+  }
+  .neu-btn:active {
+    transform: scale(0.97);
+    background: color-mix(in srgb, var(--accent) 20%, var(--glass-bg));
+  }
+  .neu-circle {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    box-shadow: 0 4px 14px var(--shadow-d);
+  }
+  .neu-circle.active {
+    background: color-mix(in srgb, var(--accent) 32%, var(--glass-bg));
+    border: 1px solid var(--accent);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
   .mono { font-family: 'Space Grotesk', monospace; }
   .display { font-family: 'Fraunces', serif; }
-  .chip { transition: all .12s ease; }
+  .chip { transition: all .15s ease; }
 `;
+
+// Kept for backwards compatibility with any older imports.
+export const NEU_CSS = GLASS_CSS;
