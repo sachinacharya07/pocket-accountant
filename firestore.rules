@@ -4,12 +4,12 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // Each user can only read/write their own profile doc
-    // (fields: allowance, goal: { name, target, saved })
+    // (fields: allowance, goal: { name, target, saved }, customCategories: [...])
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
 
-      // ...and their own expenses subcollection
-      match /expenses/{expenseId} {
+      // ...and every subcollection under it (expenses, recurring, etc.)
+      match /{subcollection}/{docId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
     }
