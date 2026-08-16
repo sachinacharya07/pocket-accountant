@@ -5,7 +5,8 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { auth, googleProvider } from "./firebase";
-import { Wallet, Mail, Lock } from "lucide-react";
+import { Wallet, Mail, Lock, Sun, Moon } from "lucide-react";
+import { useTheme, themeVars, NEU_CSS } from "./theme.js";
 
 export default function AuthScreen() {
   const [mode, setMode] = useState("signin"); // "signin" | "signup"
@@ -13,6 +14,7 @@ export default function AuthScreen() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const { mode: theme, colors, toggle } = useTheme();
 
   async function handleGoogle() {
     setError("");
@@ -44,65 +46,69 @@ export default function AuthScreen() {
   }
 
   return (
-    <div style={{ background: "#F4F1E9", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ ...themeVars(colors), background: "var(--bg)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: 16, fontFamily: "'Inter', sans-serif" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap');
-        .neu { background: #EDEAE2; border-radius: 20px; box-shadow: 8px 8px 16px #c8c5bc, -8px -8px 16px #ffffff; }
-        .neu-in { background: #EDEAE2; border-radius: 14px; box-shadow: inset 6px 6px 12px #c8c5bc, inset -6px -6px 12px #ffffff; }
-        .neu-btn { background: #EDEAE2; border-radius: 14px; box-shadow: 6px 6px 12px #c8c5bc, -6px -6px 12px #ffffff; transition: all .12s ease; cursor: pointer; border: none; }
-        .neu-btn:active { box-shadow: inset 4px 4px 8px #c8c5bc, inset -4px -4px 8px #ffffff; }
-        .neu-circle { background: #EDEAE2; border-radius: 50%; box-shadow: 6px 6px 12px #c8c5bc, -6px -6px 12px #ffffff; }
+        ${NEU_CSS}
       `}</style>
 
-      <div className="neu" style={{ width: 360, maxWidth: "100%", padding: 28 }}>
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 22 }}>
-          <div className="neu-circle" style={{ width: 56, height: 56, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
-            <Wallet size={24} color="#1F7A5C" />
-          </div>
-          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 700, color: "#3A362E" }}>Pocket Accountant</div>
-          <div style={{ fontSize: 12, color: "#9A9484", marginTop: 2 }}>Know where every rupee goes</div>
+      <div className="neu" style={{ width: 360, maxWidth: "100%", padding: 28, position: "relative" }}>
+        <div
+          className="neu-circle" onClick={toggle}
+          style={{ position: "absolute", top: 20, right: 20, width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+          title="Toggle theme"
+        >
+          {theme === "light" ? <Moon size={13} color="var(--text-2)" /> : <Sun size={13} color="var(--text-2)" />}
         </div>
 
-        <button className="neu-btn" onClick={handleGoogle} disabled={busy} style={{ width: "100%", padding: "12px", fontSize: 14, fontWeight: 600, color: "#3A362E", marginBottom: 16 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 22 }}>
+          <div className="neu-circle" style={{ width: 56, height: 56, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
+            <Wallet size={24} color="var(--accent)" />
+          </div>
+          <div style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 700, color: "var(--text-1)" }}>Pocket Accountant</div>
+          <div style={{ fontSize: 12, color: "var(--text-2)", marginTop: 2 }}>Know where every rupee goes</div>
+        </div>
+
+        <button className="neu-btn" onClick={handleGoogle} disabled={busy} style={{ width: "100%", padding: "12px", fontSize: 14, fontWeight: 600, color: "var(--text-1)", marginBottom: 16 }}>
           Continue with Google
         </button>
 
         <div style={{ display: "flex", alignItems: "center", gap: 10, margin: "6px 0 16px" }}>
-          <div style={{ flex: 1, height: 1, background: "#DAD6CB" }} />
-          <span style={{ fontSize: 11, color: "#9A9484" }}>or</span>
-          <div style={{ flex: 1, height: 1, background: "#DAD6CB" }} />
+          <div style={{ flex: 1, height: 1, background: "var(--divider)" }} />
+          <span style={{ fontSize: 11, color: "var(--text-2)" }}>or</span>
+          <div style={{ flex: 1, height: 1, background: "var(--divider)" }} />
         </div>
 
         <form onSubmit={handleEmail}>
           <div className="neu-in" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", marginBottom: 10 }}>
-            <Mail size={15} color="#9A9484" />
+            <Mail size={15} color="var(--text-2)" />
             <input
               type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              style={{ border: "none", outline: "none", background: "transparent", fontSize: 13, color: "#3A362E", width: "100%" }}
+              style={{ border: "none", outline: "none", background: "transparent", fontSize: 13, color: "var(--text-1)", width: "100%" }}
             />
           </div>
           <div className="neu-in" style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", marginBottom: 14 }}>
-            <Lock size={15} color="#9A9484" />
+            <Lock size={15} color="var(--text-2)" />
             <input
               type="password" required value={password} onChange={(e) => setPassword(e.target.value)}
               placeholder="Password" minLength={6}
-              style={{ border: "none", outline: "none", background: "transparent", fontSize: 13, color: "#3A362E", width: "100%" }}
+              style={{ border: "none", outline: "none", background: "transparent", fontSize: 13, color: "var(--text-1)", width: "100%" }}
             />
           </div>
 
-          {error && <div style={{ fontSize: 12, color: "#C1584B", marginBottom: 12 }}>{error}</div>}
+          {error && <div style={{ fontSize: 12, color: "var(--danger)", marginBottom: 12 }}>{error}</div>}
 
-          <button type="submit" className="neu-btn" disabled={busy} style={{ width: "100%", padding: "12px", fontSize: 14, fontWeight: 600, color: "#1F7A5C" }}>
+          <button type="submit" className="neu-btn" disabled={busy} style={{ width: "100%", padding: "12px", fontSize: 14, fontWeight: 600, color: "var(--accent)" }}>
             {mode === "signup" ? "Create account" : "Sign in"}
           </button>
         </form>
 
-        <div style={{ textAlign: "center", marginTop: 16, fontSize: 12, color: "#9A9484" }}>
+        <div style={{ textAlign: "center", marginTop: 16, fontSize: 12, color: "var(--text-2)" }}>
           {mode === "signup" ? "Already have an account?" : "New here?"}{" "}
           <span
             onClick={() => setMode(mode === "signup" ? "signin" : "signup")}
-            style={{ color: "#1F7A5C", fontWeight: 600, cursor: "pointer" }}
+            style={{ color: "var(--accent)", fontWeight: 600, cursor: "pointer" }}
           >
             {mode === "signup" ? "Sign in" : "Create one"}
           </span>
