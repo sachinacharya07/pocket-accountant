@@ -129,6 +129,23 @@ function PocketAccountant({ user, theme, colors, onToggleTheme, installEvent, on
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recurring]);
 
+  useEffect(() => {
+    if (notifPerm !== "granted" || !profile || !expenses) return;
+    const allowance = profile.allowance ?? 5000;
+    const spent = expenses.reduce((s, e) => s + e.amount, 0);
+    const remaining = allowance - spent;
+    const pctUsed = allowance > 0 ? Math.round((spent / allowance) * 100) : 0;
+    const mk = monthKey();
+    if (remaining < 0 && !notifiedRef.current[mk + "-over"]) {
+      notifiedRef.current[mk + "-over"] = true;
+      new Notification("Pocket Accountant", { body: `You're ${rupee(-remaining)} over your allowance this month.` });
+    } else if (pctUsed >= 80 && !notifiedRef.current[mk + "-80"]) {
+      notifiedRef.current[mk + "-80"] = true;
+      new Notification("Pocket Accountant", { body: `You've used ${pctUsed}% of this month's allowance.` });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile, expenses, notifPerm]);
+
   if (!profile || !expenses || !recurring) {
     return (
       <div style={{ ...themeVars(colors), background: "var(--bg)", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Inter', sans-serif", color: "var(--text-2)", fontSize: 13 }}>
@@ -175,18 +192,6 @@ function PocketAccountant({ user, theme, colors, onToggleTheme, installEvent, on
   const achievements = computeAchievements({ expenses, spent, allowance, goal, today });
   const weeklyData = last7Days(expenses, today);
 
-  useEffect(() => {
-    if (notifPerm !== "granted") return;
-    const mk = monthKey();
-    if (remaining < 0 && !notifiedRef.current[mk + "-over"]) {
-      notifiedRef.current[mk + "-over"] = true;
-      new Notification("Pocket Accountant", { body: `You're ${rupee(-remaining)} over your allowance this month.` });
-    } else if (pctUsed >= 80 && !notifiedRef.current[mk + "-80"]) {
-      notifiedRef.current[mk + "-80"] = true;
-      new Notification("Pocket Accountant", { body: `You've used ${pctUsed}% of this month's allowance.` });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pctUsed, remaining, notifPerm]);
 
   async function addExpense(category, amount, note) {
     await addDoc(collection(db, "users", user.uid, "expenses"), {
